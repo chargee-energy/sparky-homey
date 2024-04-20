@@ -1,0 +1,16 @@
+[
+  {
+    "id": "label",
+    "type": "label",
+    "label": { "en": "IP address" },
+    "value": "192.168.0.10",
+    "hint": { "en": "The IP address of the device." }
+  },
+  {
+    "id": "ip_address",
+    "type": "text",
+    "label": { "en": "IP address" },
+    "value": "",
+    "hint": { "en": "Fill in the IP address of your Sparky" }
+  }
+]
