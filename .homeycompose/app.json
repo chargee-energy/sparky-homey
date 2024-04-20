@@ -1,0 +1,30 @@
+{
+  "id": "com.chargee.sparky",
+  "version": "1.0.0",
+  "compatibility": ">=5.0.0",
+  "brandColor": "#1D1543",
+  "sdk": 3,
+  "platforms": [
+    "local",
+    "cloud"
+  ],
+  "name": {
+    "en": "Chargee Sparky"
+  },
+  "description": {
+    "en": "Adds support for Sparky P1 device."
+  },
+  "category": [
+    "energy"
+  ],
+  "permissions": [],
+  "images": {
+    "small": "/assets/images/small.png",
+    "large": "/assets/images/large.png",
+    "xlarge": "/assets/images/xlarge.png"
+  },
+  "author": {
+    "name": "Bart van den Berg",
+    "email": "bart@chargee.energy"
+  }
+}
