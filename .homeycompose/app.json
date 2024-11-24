@@ -1,6 +1,6 @@
 {
   "id": "com.chargee.sparky",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "compatibility": ">=5.0.0",
   "brandColor": "#1D1543",
   "sdk": 3,
@@ -18,7 +18,20 @@
   "category": [
     "energy"
   ],
-  "tags": { "en": ["smart energy", "smart meter", "P1", "realtime"], "nl" : ["slimme energie", "slimme meter", "P1", "realtime"] },
+  "tags": {
+    "en": [
+      "smart energy",
+      "smart meter",
+      "P1",
+      "realtime"
+    ],
+    "nl": [
+      "slimme energie",
+      "slimme meter",
+      "P1",
+      "realtime"
+    ]
+  },
   "permissions": [],
   "images": {
     "small": "/assets/images/small.png",
