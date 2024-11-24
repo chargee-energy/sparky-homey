@@ -1,35 +1,64 @@
 
-<h2>Enter IP-address</h2>
-<p>
-    Please enter the IP-address of your Sparky device.
-</p>
 
 <script type="application/javascript">
-    Homey.emit("ip_entered", { foo: "bar" }).then(function (result) {
-        console.log(result); // result is: Hello!
+    document.getElementById("ip_form").addEventListener("submit", function (event) {
+        event.preventDefault();
+        Homey.showLoadingOverlay()
+
+        let sparky_name = document.getElementById("sparky_name").value;
+        let ip_address = document.getElementById("ip_address").value;
+        Homey.emit("ip_entered", { ip_address: ip_address }).then(function (result) {
+            // console.log(result); // result is: Hello!
+            Homey.hideLoadingOverlay()
+
+            if (result === "Success") {
+                // Homey.alert("A Sparky is found and paired!");
+                Homey.createDevice({
+                    // The name of the device that will be shown to the user
+                    name: sparky_name,
+
+                    // The data object is required and should contain only unique properties for the device.
+                    // So a MAC address is good, but an IP address is bad (can change over time)
+                    data: {
+                        id: ip_address,
+                    },
+
+                    // Optional: The store is dynamic and persistent storage for your device
+                    store: {
+                        // For example store the IP address of your device
+                        ipAddress: ip_address,
+                    },
+                })
+                    .then(function (result) {
+                        Homey.done();
+                    })
+                    .catch(function (error) {
+                        Homey.alert(error);
+                    });
+            } else {
+                Homey.alert("No Sparky found on the given IP-address. Please try again.");
+            }
+        });
     });
 
-
-    Homey.createDevice({
-        // The name of the device that will be shown to the user
-        name: "Sparky Amstellaan 9",
-
-        // The data object is required and should contain only unique properties for the device.
-        // So a MAC address is good, but an IP address is bad (can change over time)
-        data: {
-            id: "JOD##&((&#",
-        },
-
-        // Optional: The store is dynamic and persistent storage for your device
-        store: {
-            // For example store the IP address of your device
-            address: "192.168.0.176",
-        },
-    })
-        .then(function (result) {
-            Homey.done();
-        })
-        .catch(function (error) {
-            Homey.alert(error);
-        });
 </script>
+
+<header class="homey-header">
+    <h1 class="homey-title" data-i18n="pair.title">
+        <!-- This will be filled with the translated string with key 'settings.title'. -->
+    </h1>
+    <p class="homey-subtitle" data-i18n="pair.subtitle">
+        <!-- This will be filled with the translated string with key 'settings.subtitle'. -->
+    </p>
+</header>
+<form id="ip_form" class="homey-form">
+    <div class="homey-form-group">
+        <label for="sparky_name" class="homey-form-label" data-i18n="pair.name_label"></label>
+        <input type="text" class="homey-form-input" id="sparky_name" name="sparky_name" placeholder="Sparky" required>
+    </div>
+    <div class="homey-form-group">
+    <label for="ip_address" class="homey-form-label" data-i18n="pair.ip_label"></label>
+    <input type="text" class="homey-form-input" id="ip_address" name="ip_address" placeholder="127.0.0.1" required>
+    </div>
+    <button type="submit" class="homey-button-primary" data-i18n="pair.submit"></button>
+</form>

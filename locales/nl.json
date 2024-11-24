@@ -1,0 +1,9 @@
+{
+  "pair": {
+    "title": "Sparky slimme P1 Meter",
+    "subtitle": "Voer hier de details van uw Sparky P1 meter in.",
+    "name_label": "Naam Sparky",
+    "ip_label": "IP Adres",
+    "submit": "Verbind je Sparky"
+  }
+}
