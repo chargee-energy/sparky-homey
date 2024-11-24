@@ -5,18 +5,20 @@
   "brandColor": "#1D1543",
   "sdk": 3,
   "platforms": [
-    "local",
-    "cloud"
+    "local"
   ],
   "name": {
-    "en": "Chargee Sparky"
+    "en": "Sparky P1 Meter",
+    "nl": "Sparky slimme P1 Meter"
   },
   "description": {
-    "en": "Adds support for Sparky P1 device."
+    "en": "Adds support for Sparky P1 device.",
+    "nl": "Lees realtime P1 berichten van je slimme meter."
   },
   "category": [
     "energy"
   ],
+  "tags": { "en": ["smart energy", "smart meter", "P1", "realtime"], "nl" : ["slimme energie", "slimme meter", "P1", "realtime"] },
   "permissions": [],
   "images": {
     "small": "/assets/images/small.png",

@@ -8,7 +8,7 @@ class Sparky extends Homey.App {
    * onInit is called when the app is initialized.
    */
   async onInit() {
-    this.log('Firing up Sparky integration...');
+    this.log('Firing up Chargee sparky v3 integration...');
   }
 
 }

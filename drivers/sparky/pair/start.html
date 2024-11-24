@@ -1,0 +1,35 @@
+
+<h2>Enter IP-address</h2>
+<p>
+    Please enter the IP-address of your Sparky device.
+</p>
+
+<script type="application/javascript">
+    Homey.emit("ip_entered", { foo: "bar" }).then(function (result) {
+        console.log(result); // result is: Hello!
+    });
+
+
+    Homey.createDevice({
+        // The name of the device that will be shown to the user
+        name: "Sparky Amstellaan 9",
+
+        // The data object is required and should contain only unique properties for the device.
+        // So a MAC address is good, but an IP address is bad (can change over time)
+        data: {
+            id: "JOD##&((&#",
+        },
+
+        // Optional: The store is dynamic and persistent storage for your device
+        store: {
+            // For example store the IP address of your device
+            address: "192.168.0.176",
+        },
+    })
+        .then(function (result) {
+            Homey.done();
+        })
+        .catch(function (error) {
+            Homey.alert(error);
+        });
+</script>

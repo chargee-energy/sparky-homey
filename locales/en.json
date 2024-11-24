@@ -1,1 +1,10 @@
-{}
+{
+  "pair": {
+    "title": "Sparky Smart P1 Meter",
+    "subtitle": "Enter the details of your Sparky P1 meter here.",
+    "name_label": "Name Sparky",
+    "ip_label": "IP Address",
+    "submit": "Connect my Sparky"
+
+  }
+}
