@@ -20,7 +20,7 @@
   "capabilitiesOptions": {
     "meter_power": {
       "title": {
-        "en": "Meter reading kWh"
+        "en": "Total Electric consumption"
       }
     },
     "measure_power": {
@@ -30,7 +30,7 @@
     },
     "meter_gas": {
       "title": {
-        "en": "Gas in m3"
+        "en": "Total Gas consumption"
       }
     },
     "measure_current.L1": {
@@ -50,12 +50,12 @@
     },
     "measure_voltage.L1": {
       "title": {
-        "en": "Voltage L3"
+        "en": "Voltage L1"
       }
     },
     "measure_voltage.L2": {
       "title": {
-        "en": "Voltage L3"
+        "en": "Voltage L2"
       }
     },
     "measure_voltage.L3": {
