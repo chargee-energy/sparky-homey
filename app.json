@@ -9,12 +9,12 @@
     "local"
   ],
   "name": {
-    "en": "Sparky P1 Meter",
-    "nl": "Sparky slimme P1 Meter"
+    "en": "Chargee Sparky",
+    "nl": "Chargee Sparky"
   },
   "description": {
-    "en": "Adds support for Sparky P1 device.",
-    "nl": "Lees realtime P1 berichten van je slimme meter."
+    "en": "Read realtime P1 messages from your smart meter and unlock the full potential of smart energy through Chargee Sparky and Homey.",
+    "nl": "Lees realtime P1 berichten van je slimme meter en unlock het volledige potentieel van slimme energie via Chargee Sparky en Homey."
   },
   "category": [
     "energy"
@@ -131,22 +131,26 @@
           "id": "label",
           "type": "label",
           "label": {
-            "en": "IP address"
+            "en": "Name of your Sparky",
+            "nl": "Naam van je Sparky"
           },
-          "value": "192.168.0.10",
+          "value": "",
           "hint": {
-            "en": "The IP address of the device."
+            "en": "Name of your device.",
+            "nl": "De naam van het apparaat."
           }
         },
         {
           "id": "ip_address",
           "type": "text",
           "label": {
-            "en": "IP address"
+            "en": "IP Address",
+            "nl": "IP-adres"
           },
           "value": "",
           "hint": {
-            "en": "Fill in the IP address of your Sparky"
+            "en": "Fill in the IP address of your Sparky",
+            "nl": "Vul het IP-adres van je Sparky in"
           }
         }
       ]

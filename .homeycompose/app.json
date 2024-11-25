@@ -8,12 +8,12 @@
     "local"
   ],
   "name": {
-    "en": "Sparky P1 Meter",
-    "nl": "Sparky slimme P1 Meter"
+    "en": "Chargee Sparky",
+    "nl": "Chargee Sparky"
   },
   "description": {
-    "en": "Adds support for Sparky P1 device.",
-    "nl": "Lees realtime P1 berichten van je slimme meter."
+    "en": "Read realtime P1 messages from your smart meter and unlock the full potential of smart energy through Chargee Sparky and Homey.",
+    "nl": "Lees realtime P1 berichten van je slimme meter en unlock het volledige potentieel van slimme energie via Chargee Sparky en Homey."
   },
   "category": [
     "energy"
