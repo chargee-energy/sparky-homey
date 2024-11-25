@@ -10,7 +10,7 @@ Bart van den Berg - bart@chargee.energy
 
 ### Release Notes
 
-#### 1.0.2
+#### 1.0.3
 - Copy and images changes
 - Release for the Athom App Store
 
