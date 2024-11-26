@@ -10,6 +10,7 @@ class SparkyDevice extends Homey.Device {
   buffer: string = '';
   initialGasReading?: number;
   initialPowerReading?: number;
+  pollingInterval?: NodeJS.Timeout;
 
   /**
    * onInit is called when the device is initialized.
@@ -19,6 +20,7 @@ class SparkyDevice extends Homey.Device {
 
     this.ipAddress = this.getStoreValue('ipAddress') as string;
     this.log('Sparky IP address:', this.ipAddress);
+
 
     this.initialGasReading = await this.getStoreValue('initialGasReading') as number;
     this.initialPowerReading = await this.getStoreValue('initialPowerReading') as number;
@@ -46,7 +48,9 @@ class SparkyDevice extends Homey.Device {
   }
 
   async initializeSocket() {
-    this.log('Initializing socket connection to Sparky energy meter...');
+    this.log('Initializing new socket connection to Sparky energy meter...');
+
+    if (this.pollingInterval) clearInterval(this.pollingInterval); // clear out early polling interval
 
     this.client = new net.Socket();
 
@@ -75,17 +79,29 @@ class SparkyDevice extends Homey.Device {
     this.client.on('error', (error) => {
       this.error('Socket error:', error);
       this.client?.destroy();
+      this.pollingInterval = this.homey.setInterval(async () => {
+        this.log('Reconnecting to DSMR meter after socket error...');
+        await this.initializeSocket();
+      }, 5000);
     });
 
     this.client.on('close', () => {
       this.log('Connection to DSMR meter closed.');
+      this.client?.destroy();
       // Optionally, attempt to reconnect
-      // setTimeout(() => this.initializeSocket(), 5000);
+      this.pollingInterval = this.homey.setInterval(async () => {
+        this.log('Reconnecting to DSMR after closed socket...');
+        await this.initializeSocket();
+      }, 5000);
     });
 
     this.client.on('timeout', () => {
       this.error('Socket timeout.');
       this.client?.destroy();
+      this.pollingInterval = this.homey.setInterval(async () => {
+        this.log('Reconnecting to DSMR after socket timeout...');
+        await this.initializeSocket();
+      }, 5000);
     });
   }
 
