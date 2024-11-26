@@ -2,7 +2,7 @@
   "_comment": "This file is generated. Please edit .homeycompose/app.json instead.",
   "id": "com.chargee.sparky",
   "version": "1.0.4",
-  "compatibility": ">=5.0.0",
+  "compatibility": ">=12.1.0",
   "brandColor": "#1D1543",
   "sdk": 3,
   "platforms": [
@@ -155,5 +155,33 @@
         }
       ]
     }
-  ]
+  ],
+  "widgets": {
+    "chargee-energy": {
+      "name": {
+        "en": "Chargee Energy"
+      },
+      "height": 188,
+      "settings": [],
+      "api": {
+        "getSomething": {
+          "method": "GET",
+          "path": "/"
+        },
+        "addSomething": {
+          "method": "POST",
+          "path": "/"
+        },
+        "updateSomething": {
+          "method": "PUT",
+          "path": "/:id"
+        },
+        "deleteSomething": {
+          "method": "DELETE",
+          "path": "/:id"
+        }
+      },
+      "id": "chargee-energy"
+    }
+  }
 }

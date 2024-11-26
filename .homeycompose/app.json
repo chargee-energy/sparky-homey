@@ -1,7 +1,14 @@
 {
   "id": "com.chargee.sparky",
+  "homeyCommunityTopicId": 121732,
+  "homepage": "https://chargee.energy",
+  "support": "mailto:support@chargee.energy",
+  "source": "https://github.com/chargee-energy/sparky-homey",
+  "bugs": {
+    "url": "https://github.com/chargee-energy/sparky-homey/issues"
+  },
   "version": "1.0.4",
-  "compatibility": ">=5.0.0",
+  "compatibility": ">=12.1.0",
   "brandColor": "#1D1543",
   "sdk": 3,
   "platforms": [
