@@ -19,5 +19,8 @@
   },
   "1.0.6": {
     "en": "Now streaming data + added energy cumulative capabilities"
+  },
+  "1.0.7": {
+    "en": "Adding firmware check explainer"
   }
 }
