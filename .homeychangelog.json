@@ -13,5 +13,8 @@
   },
   "1.0.4": {
     "en": "Icon background updated"
+  },
+  "1.0.5": {
+    "en": "Now streaming data, instead of polling + added cumulative energy capabilities"
   }
 }
