@@ -22,5 +22,8 @@
   },
   "1.0.7": {
     "en": "Adding firmware check explainer"
+  },
+  "1.0.8": {
+    "en": "Adding fix for updating existing Sparky App with has Capability check"
   }
 }

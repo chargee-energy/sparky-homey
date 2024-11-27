@@ -8,7 +8,7 @@
   "bugs": {
     "url": "https://github.com/chargee-energy/sparky-homey/issues"
   },
-  "version": "1.0.7",
+  "version": "1.0.8",
   "compatibility": ">=5.0.0",
   "brandColor": "#1D1543",
   "sdk": 3,
