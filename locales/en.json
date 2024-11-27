@@ -4,7 +4,16 @@
     "subtitle": "Enter the details of your Sparky P1 meter here.",
     "name_label": "Name Sparky",
     "ip_label": "IP Address",
-    "submit": "Connect my Sparky"
+    "submit": "Connect my Sparky",
+    "title_firmware_update": "Sparky Firmware 52 or higher required",
+    "subtitle_firmware_update": "Confirm that you have installed the latest firmware version of Sparky.",
+    "update_instructions": "Follow these instructions to check your Sparky Firmware.",
+    "step1": "Connect your Sparky",
+    "step2": "Open the Sparky app on your mobile or tablet.",
+    "step3": "Navigate to <strong>Profile </strong>&gt; <strong>Your Address </strong> &gt; <strong>Sparky </strong>.",
+    "step4": "Check if your Sparky is running firmware 52 or higher.",
+    "note": "If your Sparky is not running the latest version of the Firmware, it will be updated within 24 hours after a fresh installation. If that is not the case, please contact our <a href=\"https://support.chargee.energy/\">customer service</a>.",
+    "button_next": "Next"
 
   }
 }

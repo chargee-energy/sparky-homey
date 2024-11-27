@@ -4,6 +4,15 @@
     "subtitle": "Voer hier de details van uw Sparky P1 meter in.",
     "name_label": "Naam Sparky",
     "ip_label": "IP Adres",
-    "submit": "Verbind je Sparky"
+    "submit": "Verbind je Sparky",
+    "title_firmware_update": "Sparky Firmware 52 of hoger noodzakelijk",
+    "subtitle_firmware_update": "Bevestig dat je de laatste firmware versie van Sparky hebt geïnstalleerd.",
+    "update_instructions": "Volg deze instructies om je Sparky Firmware te controleren.",
+    "step1": "Verbind je Sparky",
+    "step2": "Open de Sparky app op je mobiel of tablet.",
+    "step3": "Navigeer naar <strong>Profiel </strong>&gt; <strong>Jouw Adres </strong> &gt; <strong>Sparky </strong>.",
+    "step4": "Controleer of je Sparky op firmware 52 of hoger draait.",
+    "note": "Als je Sparky niet op de laatste versie van de Firmware draait, zal die na een verse installatie binnen 24 uur worden bijgewerkt. Mocht dat niet het geval zijn, neem dan contact op met onze <a href=\"https://support.chargee.energy/\">klantenservice</a>.",
+    "button_next": "Volgende"
   }
 }

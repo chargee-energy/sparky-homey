@@ -1,0 +1,37 @@
+<script type="application/javascript">
+    // Navigate to the "start" screen when Next is clicked
+    $('.next-button').on('click', function() {
+        Homey.showView("start");
+    });
+</script>
+
+<header class="homey-header">
+    <h1 class="homey-title" data-i18n="pair.title_firmware_update">
+        Requires the latest firmware version
+    </h1>
+    <p class="homey-subtitle" data-i18n="pair.subtitle_firmware_update">
+        Use these steps to confirm you're on the latest firmware version.
+    </p>
+</header>
+
+<section class="homey-content">
+    <div class="homey-instructions">
+        <p data-i18n="pair.update_instructions">
+            Follow these steps to check your Sparky firmware version:
+        </p>
+        <ol>
+            <li data-i18n="pair.step1">Connect your Sparky device to a power source.</li>
+            <li data-i18n="pair.step2">Open the Sparky app on your smartphone.</li>
+            <li data-i18n="pair.step3">Navigate to <strong>Profile </strong>&gt; <strong>Your address </strong> &gt; <strong>Sparky </strong>.</li>
+            <li data-i18n="pair.step4">Ensure your Sparky is running on firmware version 52 or higher before you continue</li>
+        </ol>
+        <!-- Note -->
+        <p data-i18n="pair.note">
+            Note: If your Sparky device is not running on the latest firmware, please update it before proceeding. This happens within 24 hours of installation automatically. If you need help, please contact our <a href="https://support.chargee.energy/">support team</a>.
+        </p>
+    </div>
+</section>
+
+<footer class="homey-footer">
+    <button class="homey-button next-button" data-i18n="pair.button_next">Continue</button>
+</footer>
