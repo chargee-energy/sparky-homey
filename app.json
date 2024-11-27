@@ -8,7 +8,7 @@
   "bugs": {
     "url": "https://github.com/chargee-energy/sparky-homey/issues"
   },
-  "version": "1.0.5",
+  "version": "1.0.6",
   "compatibility": ">=5.0.0",
   "brandColor": "#1D1543",
   "sdk": 3,
@@ -20,8 +20,8 @@
     "nl": "Chargee Sparky"
   },
   "description": {
-    "en": "Read realtime P1 messages from your smart meter and unlock the full potential of smart energy through Chargee Sparky and Homey.",
-    "nl": "Lees realtime P1 berichten van je slimme meter en unlock het volledige potentieel van slimme energie via Chargee Sparky en Homey."
+    "en": "Unlock the full potential of smart energy through Chargee Sparky and Homey.",
+    "nl": "Unlock het volledige potentieel van slimme energie via Chargee Sparky en Homey."
   },
   "category": [
     "energy"
