@@ -1,6 +1,7 @@
 {
   "name": {
-    "en": "Sparky"
+    "en": "Sparky",
+    "nl": "Sparky"
   },
   "class": "sensor",
   "capabilities": [
@@ -12,56 +13,89 @@
     "measure_voltage.L3",
     "measure_current.L1",
     "measure_current.L2",
-    "measure_current.L3"
+    "measure_current.L3",
+    "meter_power.imported",
+    "meter_power.exported"
   ],
   "energy": {
-    "cumulative": true
+    "cumulative": true,
+    "cumulativeImportedCapability": "meter_power.imported",
+    "cumulativeExportedCapability": "meter_power.exported"
   },
   "capabilitiesOptions": {
     "meter_power": {
       "title": {
-        "en": "Total Electric consumption"
+        "en": "Total consumption",
+        "nl": "Totale elektriciteitsverbruik",
+        "unit": "kWh"
       }
     },
     "measure_power": {
       "title": {
-        "en": "Power in W"
+        "en": "Power",
+        "nl": "Vermogen",
+        "unit": "W"
       }
     },
     "meter_gas": {
       "title": {
-        "en": "Total Gas consumption"
+        "en": "Total Gas consumption",
+        "nl": "Totale gasverbruik",
+        "unit": "m³"
       }
     },
     "measure_current.L1": {
       "title": {
-        "en": "Current L1"
+        "en": "Current L1",
+        "nl": "Stroomsterkte fase 1",
+        "unit": "A"
       }
     },
     "measure_current.L2": {
       "title": {
-        "en": "Current L2"
+        "en": "Current L2",
+        "nl": "Stroomsterkte fase ",
+        "unit": "A"
       }
     },
     "measure_current.L3": {
       "title": {
-        "en": "Current L3"
+        "en": "Current L3",
+        "nl": "Stroomsterkte fase 3"
       }
     },
     "measure_voltage.L1": {
       "title": {
-        "en": "Voltage L1"
+        "en": "Voltage L1",
+        "nl": "Spanning fase 1",
+        "unit": "V"
       }
     },
     "measure_voltage.L2": {
       "title": {
-        "en": "Voltage L2"
+        "en": "Voltage L2",
+        "nl": "Spanning fase 2",
+        "unit": "V"
       }
     },
     "measure_voltage.L3": {
       "title": {
-        "en": "Voltage L3"
+        "en": "Voltage L3",
+        "nl": "Spanning fase 3",
+        "unit": "V"
       }
+    },
+    "meter_power.imported": {
+      "title": {
+        "en": "Imported Energy",
+        "nl": "Geleverde energie",
+        "unit": "kWh"}
+    },
+    "meter_power.exported": {
+      "title": {
+        "en": "Exported Energy",
+        "nl": "Teruggeleverde energie",
+        "unit": "kWh"}
     }
   },
   "platforms": [

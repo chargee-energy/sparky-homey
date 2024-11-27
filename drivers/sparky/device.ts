@@ -10,6 +10,8 @@ class SparkyDevice extends Homey.Device {
   buffer: string = '';
   initialGasReading?: number;
   initialPowerReading?: number;
+  initialPowerDelivered?: number;
+  initialPowerReceived?: number;
   pollingInterval?: NodeJS.Timeout;
 
   /**
@@ -25,6 +27,9 @@ class SparkyDevice extends Homey.Device {
     this.initialGasReading = await this.getStoreValue('initialGasReading') as number;
     this.initialPowerReading = await this.getStoreValue('initialPowerReading') as number;
 
+    this.initialPowerDelivered = await this.getStoreValue('initialPowerDelivered') as number;
+    this.initialPowerReading = await this.getStoreValue('initialPowerReading') as number;
+
     if (!this.ipAddress) {
       this.error('IP address not found in store!');
       return;
@@ -38,6 +43,9 @@ class SparkyDevice extends Homey.Device {
     this.registerCapabilityListener('measure_voltage.L1', this.onCapabilityMeasurePower.bind(this));
     this.registerCapabilityListener('measure_voltage.L2', this.onCapabilityMeasurePower.bind(this));
     this.registerCapabilityListener('measure_voltage.L3', this.onCapabilityMeasurePower.bind(this));
+
+    this.registerCapabilityListener('meter_power.imported', this.onCapabilityMeasurePower.bind(this));
+    this.registerCapabilityListener('meter_power.exported', this.onCapabilityMeasurePower.bind(this));
 
     // Initialize the socket connection
     await this.initializeSocket();
@@ -138,6 +146,22 @@ class SparkyDevice extends Homey.Device {
         this.setStoreValue('initialPowerReading', this.initialPowerReading);
       }
 
+      if(this.initialPowerDelivered == null) {
+        this.initialPowerDelivered = meter_power_delivered_tariff1 + meter_power_delivered_tariff2;
+        this.setStoreValue('initialPowerDelivered', this.initialPowerDelivered);
+      }
+
+      if(this.initialPowerReceived == null) {
+        this.initialPowerReceived = meter_power_tariff1 + meter_power_tariff2;
+        this.setStoreValue('initialPowerReceived', this.initialPowerReceived);
+      }
+
+      // @ts-ignore
+      const cumulativeReceived = (meter_power_tariff1 + meter_power_tariff2) - this.initialPowerReceived;
+
+      // @ts-ignore
+      const cumulativeDelivered = (meter_power_delivered_tariff1 + meter_power_delivered_tariff2) - this.initialPowerDelivered;
+
       const received = p1Data.electricity?.received?.actual?.reading || 0;
       const delivered = p1Data.electricity?.delivered?.actual?.reading || 0;
 
@@ -160,6 +184,8 @@ class SparkyDevice extends Homey.Device {
       this.setCapabilityValue('measure_voltage.L1', volt1).catch(this.error);
       this.setCapabilityValue('measure_voltage.L2', volt2).catch(this.error);
       this.setCapabilityValue('measure_voltage.L3', volt3).catch(this.error);
+      this.setCapabilityValue('meter_power.imported', cumulativeReceived).catch(this.error);
+      this.setCapabilityValue('meter_power.exported', cumulativeDelivered).catch(this.error);
     } catch (error) {
       this.error('Error processing P1 data:', error);
     }

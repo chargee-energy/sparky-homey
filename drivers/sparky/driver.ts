@@ -8,7 +8,7 @@ class SparkyDriver extends Homey.Driver {
    * onInit is called when the driver is initialized.
    */
   async onInit() {
-    this.log('Sparky driver has been initialized');
+    // this.log('Sparky driver has been initialized');
   }
 
   async onPair(session: any) {
@@ -123,7 +123,7 @@ class SparkyDriver extends Homey.Driver {
    */
   async promptForManualIp(session: any): Promise<string | null> {
     return new Promise((resolve) => {
-      this.log('Showing enter_ip view');
+      // this.log('Showing enter_ip view');
       session.showView('enter_ip'); // Ensure this matches the ID in app.json.
       session.on('input', async (viewId:any, input:any) => {
         this.log(`Received input: viewId=${viewId}, input=${JSON.stringify(input)}`);
