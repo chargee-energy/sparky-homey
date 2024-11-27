@@ -35,6 +35,9 @@ class SparkyDevice extends Homey.Device {
       return;
     }
 
+    if (!this.hasCapability('meter_power.imported')) { await this.addCapability('meter_power.imported'); }
+    if (!this.hasCapability('meter_power.exported')) { await this.addCapability('meter_power.exported'); }
+
     this.registerCapabilityListener('measure_power', this.onCapabilityMeasurePower.bind(this));
     this.registerCapabilityListener('meter_power', this.onCapabilityMeasurePower.bind(this));
     this.registerCapabilityListener('measure_current.L1', this.onCapabilityMeasurePower.bind(this));
