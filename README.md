@@ -6,9 +6,14 @@ Publicly released version 1.0.2. Available in the Athom App Store.
 
 ### Author
 Chargee Energy - https://chargee.energy
-Bart van den Berg - bart@chargee.energy
 
 ### Release Notes
+
+#### 1.0.9
+- Added additional capabilities
+- Removed cumulative values from install date to show raw meter values
+- Better onboarding for Sparky P1 meter version 3.0
+- Release for the Athom App Store
 
 #### 1.0.3
 - Copy and images changes
