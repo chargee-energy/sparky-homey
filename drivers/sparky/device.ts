@@ -38,6 +38,13 @@ class SparkyDevice extends Homey.Device {
     if (!this.hasCapability('meter_power.imported')) { await this.addCapability('meter_power.imported'); }
     if (!this.hasCapability('meter_power.exported')) { await this.addCapability('meter_power.exported'); }
 
+    if (!this.hasCapability('meter_power.consumedPeak')) { await this.addCapability('meter_power.consumedPeak'); }
+    if (!this.hasCapability('meter_power.consumedOffPeak')) { await this.addCapability('meter_power.consumedOffPeak'); }
+    if (!this.hasCapability('meter_power.producedPeak')) { await this.addCapability('meter_power.producedPeak'); }
+    if (!this.hasCapability('meter_power.producedOffPeak')) { await this.addCapability('meter_power.producedOffPeak'); }
+    if (!this.hasCapability('meter_power.produced')) { await this.addCapability('meter_power.produced'); } //total return
+    if (!this.hasCapability('meter_power.consumed')) { await this.addCapability('meter_power.consumed'); } //total delivery
+
     this.registerCapabilityListener('measure_power', this.onCapabilityMeasurePower.bind(this));
     this.registerCapabilityListener('meter_power', this.onCapabilityMeasurePower.bind(this));
     this.registerCapabilityListener('measure_current.L1', this.onCapabilityMeasurePower.bind(this));
@@ -133,7 +140,8 @@ class SparkyDevice extends Homey.Device {
       }
 
       // @ts-ignore
-      const meter_gas = p1Data.gas?.reading ? (p1Data.gas.reading - this.initialGasReading) : 0;
+      // const meter_gas = p1Data.gas?.reading ? (p1Data.gas.reading - this.initialGasReading) : 0;
+      const meter_gas = p1Data.gas?.reading ? p1Data.gas.reading : 0;
 
       const meter_power_tariff1 = p1Data.electricity?.received?.tariff1?.reading || 0;
       const meter_power_tariff2 = p1Data.electricity?.received?.tariff2?.reading || 0;
@@ -142,28 +150,28 @@ class SparkyDevice extends Homey.Device {
       const meter_power_delivered_tariff2 = p1Data.electricity?.delivered?.tariff2?.reading || 0;
 
       // @ts-ignore
-      const meter_power = (meter_power_tariff1 + meter_power_tariff2) - (meter_power_delivered_tariff1 + meter_power_delivered_tariff2) - (this.initialPowerReading || 0);
+      const meter_power = (meter_power_tariff1 + meter_power_tariff2) - (meter_power_delivered_tariff1 + meter_power_delivered_tariff2); //- (this.initialPowerReading || 0);
 
       if (this.initialPowerReading == null) {
         this.initialPowerReading = meter_power;
         this.setStoreValue('initialPowerReading', this.initialPowerReading);
       }
 
-      if(this.initialPowerDelivered == null) {
-        this.initialPowerDelivered = meter_power_delivered_tariff1 + meter_power_delivered_tariff2;
-        this.setStoreValue('initialPowerDelivered', this.initialPowerDelivered);
-      }
-
-      if(this.initialPowerReceived == null) {
-        this.initialPowerReceived = meter_power_tariff1 + meter_power_tariff2;
-        this.setStoreValue('initialPowerReceived', this.initialPowerReceived);
-      }
-
-      // @ts-ignore
-      const cumulativeReceived = (meter_power_tariff1 + meter_power_tariff2) - this.initialPowerReceived;
+      // if(this.initialPowerDelivered == null) {
+      //   this.initialPowerDelivered = meter_power_delivered_tariff1 + meter_power_delivered_tariff2;
+      //   this.setStoreValue('initialPowerDelivered', this.initialPowerDelivered);
+      // }
+      //
+      // if(this.initialPowerReceived == null) {
+      //   this.initialPowerReceived = meter_power_tariff1 + meter_power_tariff2;
+      //   this.setStoreValue('initialPowerReceived', this.initialPowerReceived);
+      // }
 
       // @ts-ignore
-      const cumulativeDelivered = (meter_power_delivered_tariff1 + meter_power_delivered_tariff2) - this.initialPowerDelivered;
+      const cumulativeReceived = (meter_power_tariff1 + meter_power_tariff2);
+
+      // @ts-ignore
+      const cumulativeDelivered = (meter_power_delivered_tariff1 + meter_power_delivered_tariff2);
 
       const received = p1Data.electricity?.received?.actual?.reading || 0;
       const delivered = p1Data.electricity?.delivered?.actual?.reading || 0;
@@ -180,6 +188,7 @@ class SparkyDevice extends Homey.Device {
 
       this.setCapabilityValue('meter_gas', meter_gas).catch(this.error);
       this.setCapabilityValue('meter_power', meter_power).catch(this.error);
+
       this.setCapabilityValue('measure_power', power).catch(this.error);
       this.setCapabilityValue('measure_current.L1', current1).catch(this.error);
       this.setCapabilityValue('measure_current.L2', current2).catch(this.error);
@@ -187,6 +196,12 @@ class SparkyDevice extends Homey.Device {
       this.setCapabilityValue('measure_voltage.L1', volt1).catch(this.error);
       this.setCapabilityValue('measure_voltage.L2', volt2).catch(this.error);
       this.setCapabilityValue('measure_voltage.L3', volt3).catch(this.error);
+      this.setCapabilityValue('meter_power.consumedPeak', meter_power_tariff1).catch(this.error);
+      this.setCapabilityValue('meter_power.consumedOffPeak', meter_power_tariff2).catch(this.error);
+      this.setCapabilityValue('meter_power.producedPeak', meter_power_delivered_tariff1).catch(this.error);
+      this.setCapabilityValue('meter_power.producedOffPeak', meter_power_delivered_tariff2).catch(this.error);
+      this.setCapabilityValue('meter_power.produced', cumulativeDelivered).catch(this.error);
+      this.setCapabilityValue('meter_power.consumed', cumulativeReceived).catch(this.error);
       this.setCapabilityValue('meter_power.imported', cumulativeReceived).catch(this.error);
       this.setCapabilityValue('meter_power.exported', cumulativeDelivered).catch(this.error);
     } catch (error) {

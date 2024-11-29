@@ -15,7 +15,13 @@
     "measure_current.L2",
     "measure_current.L3",
     "meter_power.imported",
-    "meter_power.exported"
+    "meter_power.exported",
+    "meter_power.consumedPeak",
+    "meter_power.consumedOffPeak",
+    "meter_power.producedPeak",
+    "meter_power.producedOffPeak",
+    "meter_power.produced",
+    "meter_power.consumed"
   ],
   "energy": {
     "cumulative": true,
@@ -39,7 +45,7 @@
     },
     "meter_gas": {
       "title": {
-        "en": "Total Gas consumption",
+        "en": "Total gas consumption",
         "nl": "Totale gasverbruik",
         "unit": "m³"
       }
@@ -87,14 +93,50 @@
     },
     "meter_power.imported": {
       "title": {
-        "en": "Imported Energy",
-        "nl": "Geleverde energie",
+        "en": "Imported energy",
+        "nl": "Totaal geleverde energie",
         "unit": "kWh"}
     },
     "meter_power.exported": {
       "title": {
-        "en": "Exported Energy",
-        "nl": "Teruggeleverde energie",
+        "en": "Exported energy",
+        "nl": "Totaal teruggeleverde energie",
+        "unit": "kWh"}
+    },
+    "meter_power.consumedPeak": {
+      "title": {
+        "en": "Consumed peak",
+        "nl": "Totaal verbruik Piek",
+        "unit": "kWh"}
+    },
+    "meter_power.consumedOffPeak": {
+      "title": {
+        "en": "Total consumed off peak",
+        "nl": "Totaal verbruik Dal",
+        "unit": "kWh"}
+    },
+    "meter_power.producedPeak": {
+      "title": {
+        "en": "Total produced peak",
+        "nl": "Totale opwek piek",
+        "unit": "kWh"}
+    },
+    "meter_power.producedOffPeak": {
+      "title": {
+        "en": "Total produced off peak",
+        "nl": "Totaal opwek dal",
+        "unit": "kWh"}
+    },
+    "meter_power.produced": {
+      "title": {
+        "en": "Total produced energy",
+        "nl": "Totaal opgewekte energie",
+        "unit": "kWh"}
+    },
+    "meter_power.consumed": {
+      "title": {
+        "en": "Consumed energy",
+        "nl": "Totaal geleverde energie",
         "unit": "kWh"}
     }
   },
