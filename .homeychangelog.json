@@ -25,5 +25,8 @@
   },
   "1.0.8": {
     "en": "Adding fix for updating existing Sparky App with has Capability check"
+  },
+  "1.0.9": {
+    "en": "Updated capabilities to include meter values (instead of cumulatives)"
   }
 }
