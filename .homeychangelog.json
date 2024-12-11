@@ -31,5 +31,8 @@
   },
   "1.0.10": {
     "en": "Added additional instructions on firmware release"
+  },
+  "1.0.11": {
+    "en": "Updated readme"
   }
 }
