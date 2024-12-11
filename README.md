@@ -1,3 +1,5 @@
+⚠️ De Chargee Sparky App is nog in ontwikkeling. Deze versie wordt momenteel getest en is nog niet goedgekeurd. Wees extra voorzichtig bij het gebruik van deze app.
+
 # Chargee Sparky
 Access P1 meter data from the Sparky P1 meter through the local API. The app supports version 1.0 / 2.0 and 3.0 of the P1 meter.
 
