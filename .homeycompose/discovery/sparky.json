@@ -1,0 +1,8 @@
+{
+  "type": "mdns-sd",
+  "mdns-sd": {
+    "name": "chargee_p1",
+    "protocol": "tcp"
+  },
+  "id": "{{txt.sn}}"
+}
