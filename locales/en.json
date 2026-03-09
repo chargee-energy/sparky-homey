@@ -1,19 +1,34 @@
 {
+  "errors": {
+    "api_unavailable": "Sparky API not reachable"
+  },
   "pair": {
     "title": "Sparky Smart P1 Meter",
     "subtitle": "Enter the details of your Sparky P1 meter here.",
+    "intro_title": "Add your Sparky",
+    "intro_subtitle": "Sparkys on your network may appear in the next step. You can also add one manually by entering its IP address.",
+    "firmware_requirement": "We only support Sparkys with firmware 95 or higher (with the Sparky API enabled).",
+    "manual_title": "Add Sparky manually",
+    "manual_subtitle": "If your Sparky was not listed above, enter its name and IP address below. The Sparky must have the API enabled (firmware 95 or higher).",
     "name_label": "Name Sparky",
     "ip_label": "IP Address",
     "submit": "Connect my Sparky",
-    "title_firmware_update": "Sparky Firmware 52 or higher required",
+    "title_firmware_update": "Sparky Firmware 95 or higher required",
     "subtitle_firmware_update": "Confirm that you have installed the latest firmware version of Sparky.",
     "update_instructions": "Follow these instructions to check your Sparky Firmware.",
     "step1": "Connect your Sparky",
     "step2": "Open the Sparky app on your mobile or tablet.",
     "step3": "Navigate to <strong>Profile </strong>&gt; <strong>Your Address </strong> &gt; <strong>Sparky </strong>.",
-    "step4": "Check if your Sparky is running firmware 52 or higher.",
+    "step4": "Ensure your Sparky is running on firmware version 95 or higher before you continue.",
     "note": "If your Sparky is not running the latest version of the Firmware, it will be updated within 24 hours after a fresh installation. If that is not the case, please contact our <a href=\"https://support.chargee.energy/\">customer service</a>.",
-    "button_next": "Next"
-
+    "button_next": "Next",
+    "error_no_sparky": "No Sparky found at this address. Check the IP and that the Sparky API is enabled (firmware 95 or higher).",
+    "discover_title": "Searching for Sparkys",
+    "discover_subtitle": "Sparkys on your network will appear below. Only devices with firmware 95 or higher are shown.",
+    "discover_searching": "Searching for Sparkys on your network…",
+    "discover_none": "No Sparkys found on your network.",
+    "discover_none_hint": "You can add one manually by IP address.",
+    "discover_add_manual": "Add manually",
+    "discover_tap_to_add": "Tap to add"
   }
 }

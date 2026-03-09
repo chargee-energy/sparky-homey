@@ -36,7 +36,7 @@
                         Homey.alert(error);
                     });
             } else {
-                Homey.alert("No Sparky found on the given IP-address. Please try again.");
+                Homey.alert(Homey.__("pair.error_no_sparky"));
             }
         });
     });
@@ -44,11 +44,11 @@
 </script>
 
 <header class="homey-header">
-    <h1 class="homey-title" data-i18n="pair.title">
-        <!-- This will be filled with the translated string with key 'settings.title'. -->
+    <h1 class="homey-title" data-i18n="pair.manual_title">
+        Add Sparky manually
     </h1>
-    <p class="homey-subtitle" data-i18n="pair.subtitle">
-        <!-- This will be filled with the translated string with key 'settings.subtitle'. -->
+    <p class="homey-subtitle" data-i18n="pair.manual_subtitle">
+        If your Sparky was not listed above, enter its name and IP address below. The Sparky must have the API enabled (firmware 95 or higher).
     </p>
 </header>
 <form id="ip_form" class="homey-form">

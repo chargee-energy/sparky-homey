@@ -8,7 +8,7 @@
   "bugs": {
     "url": "https://github.com/chargee-energy/sparky-homey/issues"
   },
-  "version": "1.0.11",
+  "version": "1.0.12",
   "compatibility": ">=5.0.0",
   "brandColor": "#1D1543",
   "sdk": 3,
@@ -201,6 +201,7 @@
           }
         }
       },
+      "discovery": "sparky",
       "platforms": [
         "local"
       ],
@@ -213,7 +214,7 @@
       },
       "pair": [
         {
-          "id": "intro"
+          "id": "discover"
         },
         {
           "id": "start"
@@ -249,5 +250,15 @@
         }
       ]
     }
-  ]
+  ],
+  "discovery": {
+    "sparky": {
+      "type": "mdns-sd",
+      "mdns-sd": {
+        "name": "chargee_p1",
+        "protocol": "tcp"
+      },
+      "id": "{{txt.sn}}"
+    }
+  }
 }

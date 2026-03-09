@@ -140,6 +140,7 @@
         "unit": "kWh"}
     }
   },
+  "discovery": "sparky",
   "platforms": [
     "local"
   ],
@@ -152,7 +153,7 @@
   },
   "pair": [
     {
-      "id": "intro"
+      "id": "discover"
     },
     {
       "id": "start"

@@ -1,0 +1,172 @@
+<style>
+    .sparky-discover-content { padding: 0 0 1rem; }
+    .sparky-loading-box {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 2rem 1rem;
+        gap: 1rem;
+    }
+    .sparky-loading-dots {
+        display: flex;
+        gap: 0.35rem;
+    }
+    .sparky-loading-dots span {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: var(--homey-color-primary, #1D1543);
+        opacity: 0.4;
+        animation: sparky-dot 1.2s ease-in-out infinite both;
+    }
+    .sparky-loading-dots span:nth-child(1) { animation-delay: 0s; }
+    .sparky-loading-dots span:nth-child(2) { animation-delay: 0.15s; }
+    .sparky-loading-dots span:nth-child(3) { animation-delay: 0.3s; }
+    @keyframes sparky-dot {
+        0%, 80%, 100% { opacity: 0.3; transform: scale(0.85); }
+        40% { opacity: 1; transform: scale(1); }
+    }
+    .sparky-device-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 0.75rem; }
+    .sparky-device-card {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        padding: 1rem 1.25rem;
+        border-radius: 12px;
+        border: 1px solid rgba(0,0,0,0.08);
+        background: var(--homey-color-surface, #fff);
+        cursor: pointer;
+        transition: transform 0.15s ease, box-shadow 0.15s ease;
+        text-align: start;
+        width: 100%;
+        box-sizing: border-box;
+    }
+    .sparky-device-card:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
+    .sparky-device-card:active { transform: translateY(0); }
+    .sparky-device-icon {
+        width: 44px;
+        height: 44px;
+        border-radius: 10px;
+        background: linear-gradient(135deg, var(--homey-color-primary, #1D1543) 0%, #2d2460 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+        color: #fff;
+        font-size: 1.25rem;
+    }
+    .sparky-device-info { flex: 1; min-width: 0; }
+    .sparky-device-name { font-weight: 600; font-size: 1rem; margin: 0 0 0.15rem; color: var(--homey-color-text, #333); }
+    .sparky-device-hint { font-size: 0.85rem; margin: 0; color: var(--homey-color-text-secondary, #666); }
+    .sparky-device-chevron { color: var(--homey-color-text-secondary, #999); font-size: 1.1rem; flex-shrink: 0; }
+    .sparky-empty-box {
+        text-align: center;
+        padding: 2rem 1rem;
+    }
+    .sparky-empty-icon { font-size: 2.5rem; margin-bottom: 0.75rem; opacity: 0.6; }
+    .sparky-empty-box p { margin: 0 0 0.5rem; color: var(--homey-color-text-secondary, #666); }
+    .sparky-empty-box p:first-of-type { font-weight: 500; color: var(--homey-color-text, #333); }
+    .sparky-empty-box .homey-button { margin-top: 1.25rem; }
+</style>
+
+<script type="application/javascript">
+    (function() {
+        const listEl = document.getElementById("sparky_list");
+        const emptyEl = document.getElementById("sparky_empty");
+        const loadingEl = document.getElementById("sparky_loading");
+
+        function showLoading() {
+            if (loadingEl) loadingEl.style.display = "flex";
+            if (listEl) listEl.style.display = "none";
+            if (emptyEl) emptyEl.style.display = "none";
+        }
+        function showList() {
+            if (loadingEl) loadingEl.style.display = "none";
+            if (listEl) listEl.style.display = "block";
+            if (emptyEl) emptyEl.style.display = "none";
+        }
+        function showEmpty() {
+            if (loadingEl) loadingEl.style.display = "none";
+            if (listEl) listEl.style.display = "none";
+            if (emptyEl) emptyEl.style.display = "block";
+        }
+
+        showLoading();
+        Homey.emit("get_discovered")
+            .then(function(devices) {
+                if (devices && devices.length > 0) {
+                    const ul = document.getElementById("sparky_device_list");
+                    if (ul) {
+                        ul.innerHTML = "";
+                        devices.forEach(function(dev) {
+                            const li = document.createElement("li");
+                            const btn = document.createElement("button");
+                            btn.type = "button";
+                            btn.className = "sparky-device-card";
+                            btn.innerHTML = '<span class="sparky-device-icon" aria-hidden="true">&#9889;</span>' +
+                                '<span class="sparky-device-info">' +
+                                '<span class="sparky-device-name">' + escapeHtml(dev.name) + '</span>' +
+                                '<span class="sparky-device-hint" data-i18n="pair.discover_tap_to_add">Tap to add</span>' +
+                                '</span>' +
+                                '<span class="sparky-device-chevron" aria-hidden="true">&#8250;</span>';
+                            btn.addEventListener("click", function() {
+                                Homey.createDevice({
+                                    name: dev.name,
+                                    data: dev.data || {},
+                                    store: dev.store || {}
+                                }).then(function() {
+                                    Homey.done();
+                                }).catch(function(err) {
+                                    Homey.alert(err && err.message ? err.message : String(err));
+                                });
+                            });
+                            li.appendChild(btn);
+                            ul.appendChild(li);
+                        });
+                    }
+                    showList();
+                } else {
+                    showEmpty();
+                }
+            })
+            .catch(function() {
+                showEmpty();
+            });
+
+        function escapeHtml(text) {
+            var div = document.createElement("div");
+            div.textContent = text;
+            return div.innerHTML;
+        }
+    })();
+</script>
+
+<header class="homey-header">
+    <h1 class="homey-title" data-i18n="pair.discover_title">Searching for Sparkys</h1>
+    <p class="homey-subtitle" data-i18n="pair.discover_subtitle">Sparkys on your network will appear below. Only devices with firmware 95 or higher are shown.</p>
+</header>
+
+<section class="homey-content sparky-discover-content">
+    <div id="sparky_loading" class="sparky-loading-box">
+        <div class="sparky-loading-dots" aria-hidden="true">
+            <span></span><span></span><span></span>
+        </div>
+        <p class="homey-subtitle" style="margin: 0;" data-i18n="pair.discover_searching">Searching for Sparkys on your network…</p>
+    </div>
+    <div id="sparky_list" style="display: none;">
+        <ul id="sparky_device_list" class="sparky-device-list"></ul>
+    </div>
+    <div id="sparky_empty" style="display: none;" class="sparky-empty-box">
+        <div class="sparky-empty-icon" aria-hidden="true">&#128268;</div>
+        <p data-i18n="pair.discover_none">No Sparkys found on your network.</p>
+        <p data-i18n="pair.discover_none_hint">You can add one manually by IP address.</p>
+        <button type="button" class="homey-button homey-button-primary" id="btn_manual" data-i18n="pair.discover_add_manual">Add manually</button>
+    </div>
+</section>
+
+<script type="application/javascript">
+    document.getElementById("btn_manual").addEventListener("click", function() {
+        Homey.showView("start");
+    });
+</script>

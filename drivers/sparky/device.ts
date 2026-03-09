@@ -1,34 +1,43 @@
 // eslint-disable-next-line strict
 import Homey from 'homey';
-import net from 'net';
-import parsePacket from '../../lib/parser'; // Update with the actual path to the parser
+import http from 'http';
+
+const SPARKY_API_PATH = '/api/v1/data';
+const POLL_INTERVAL_MS = 1000;
+
+interface SparkyApiData {
+  active_power_w?: number | null;
+  total_power_import_kwh?: number | null;
+  total_power_import_t1_kwh?: number | null;
+  total_power_import_t2_kwh?: number | null;
+  total_power_export_kwh?: number | null;
+  total_power_export_t1_kwh?: number | null;
+  total_power_export_t2_kwh?: number | null;
+  active_voltage_l1_v?: number | null;
+  active_voltage_l2_v?: number | null;
+  active_voltage_l3_v?: number | null;
+  active_current_l1_a?: number | null;
+  active_current_l2_a?: number | null;
+  active_current_l3_a?: number | null;
+  total_gas_m3?: number | null;
+  [key: string]: unknown;
+}
 
 class SparkyDevice extends Homey.Device {
 
   ipAddress?: string;
-  client?: net.Socket;
-  buffer: string = '';
-  initialGasReading?: number;
-  initialPowerReading?: number;
-  initialPowerDelivered?: number;
-  initialPowerReceived?: number;
+  readonly apiPort = 80; // Sparky REST API is always on port 80 (mDNS may advertise 3602 for P1 stream)
   pollingInterval?: NodeJS.Timeout;
+  errorCount: number = 0;
+  readonly maxErrorsBeforeUnavailable = 3;
 
-  /**
-   * onInit is called when the device is initialized.
-   */
+  getApiUrl(): string {
+    return `http://${this.ipAddress}:${this.apiPort}${SPARKY_API_PATH}`;
+  }
+
   async onInit() {
-    // this.log('Sparky device has been initialized');
-
     this.ipAddress = this.getStoreValue('ipAddress') as string;
-    this.log('Sparky IP address:', this.ipAddress);
-
-
-    this.initialGasReading = await this.getStoreValue('initialGasReading') as number;
-    this.initialPowerReading = await this.getStoreValue('initialPowerReading') as number;
-
-    this.initialPowerDelivered = await this.getStoreValue('initialPowerDelivered') as number;
-    this.initialPowerReading = await this.getStoreValue('initialPowerReading') as number;
+    this.log('Sparky API:', this.getApiUrl());
 
     if (!this.ipAddress) {
       this.error('IP address not found in store!');
@@ -37,193 +46,172 @@ class SparkyDevice extends Homey.Device {
 
     if (!this.hasCapability('meter_power.imported')) { await this.addCapability('meter_power.imported'); }
     if (!this.hasCapability('meter_power.exported')) { await this.addCapability('meter_power.exported'); }
-
     if (!this.hasCapability('meter_power.consumedPeak')) { await this.addCapability('meter_power.consumedPeak'); }
     if (!this.hasCapability('meter_power.consumedOffPeak')) { await this.addCapability('meter_power.consumedOffPeak'); }
     if (!this.hasCapability('meter_power.producedPeak')) { await this.addCapability('meter_power.producedPeak'); }
     if (!this.hasCapability('meter_power.producedOffPeak')) { await this.addCapability('meter_power.producedOffPeak'); }
-    if (!this.hasCapability('meter_power.produced')) { await this.addCapability('meter_power.produced'); } //total return
-    if (!this.hasCapability('meter_power.consumed')) { await this.addCapability('meter_power.consumed'); } //total delivery
+    if (!this.hasCapability('meter_power.produced')) { await this.addCapability('meter_power.produced'); }
+    if (!this.hasCapability('meter_power.consumed')) { await this.addCapability('meter_power.consumed'); }
 
-    this.registerCapabilityListener('measure_power', this.onCapabilityMeasurePower.bind(this));
-    this.registerCapabilityListener('meter_power', this.onCapabilityMeasurePower.bind(this));
-    this.registerCapabilityListener('measure_current.L1', this.onCapabilityMeasurePower.bind(this));
-    this.registerCapabilityListener('measure_current.L2', this.onCapabilityMeasurePower.bind(this));
-    this.registerCapabilityListener('measure_current.L3', this.onCapabilityMeasurePower.bind(this));
-    this.registerCapabilityListener('measure_voltage.L1', this.onCapabilityMeasurePower.bind(this));
-    this.registerCapabilityListener('measure_voltage.L2', this.onCapabilityMeasurePower.bind(this));
-    this.registerCapabilityListener('measure_voltage.L3', this.onCapabilityMeasurePower.bind(this));
+    this.registerCapabilityListener('measure_power', this.onCapabilityReadOnly.bind(this));
+    this.registerCapabilityListener('meter_power', this.onCapabilityReadOnly.bind(this));
+    this.registerCapabilityListener('measure_current.L1', this.onCapabilityReadOnly.bind(this));
+    this.registerCapabilityListener('measure_current.L2', this.onCapabilityReadOnly.bind(this));
+    this.registerCapabilityListener('measure_current.L3', this.onCapabilityReadOnly.bind(this));
+    this.registerCapabilityListener('measure_voltage.L1', this.onCapabilityReadOnly.bind(this));
+    this.registerCapabilityListener('measure_voltage.L2', this.onCapabilityReadOnly.bind(this));
+    this.registerCapabilityListener('measure_voltage.L3', this.onCapabilityReadOnly.bind(this));
+    this.registerCapabilityListener('meter_power.imported', this.onCapabilityReadOnly.bind(this));
+    this.registerCapabilityListener('meter_power.exported', this.onCapabilityReadOnly.bind(this));
 
-    this.registerCapabilityListener('meter_power.imported', this.onCapabilityMeasurePower.bind(this));
-    this.registerCapabilityListener('meter_power.exported', this.onCapabilityMeasurePower.bind(this));
-
-    // Initialize the socket connection
-    await this.initializeSocket();
+    this.startPolling();
   }
 
-  async onCapabilityMeasurePower(value: string, opts: string) {
-    // Implement capability handling if needed
+  async onCapabilityReadOnly() {
+    // Read-only sensor; no action.
   }
 
-  async initializeSocket() {
-    this.log('Initializing new socket connection to Sparky energy meter...');
+  startPolling() {
+    this.stopPolling();
+    this.pollingInterval = this.homey.setInterval(() => {
+      this.fetchApiData().catch((err) => this.error('Poll error:', err));
+    }, POLL_INTERVAL_MS);
+    // First fetch immediately
+    this.fetchApiData().catch((err) => this.error('Initial fetch error:', err));
+  }
 
-    if (this.pollingInterval) clearInterval(this.pollingInterval); // clear out early polling interval
+  stopPolling() {
+    if (this.pollingInterval) {
+      this.homey.clearInterval(this.pollingInterval);
+      this.pollingInterval = undefined;
+    }
+  }
 
-    this.client = new net.Socket();
+  async fetchApiData(): Promise<void> {
+    if (!this.ipAddress) return;
 
-    this.client.connect(3602, this.ipAddress!, () => {
-      this.log(`Connected to DSMR meter at ${this.ipAddress}:3602`);
-    });
-
-    this.client.on('data', (data) => {
-      this.buffer += data.toString();
-
-      // DSMR messages end with "!"
-      if (this.buffer.includes('!')) {
-        const message = this.buffer;
-        this.buffer = ''; // Reset the buffer
-
-        try {
-          const result = this.parseDSMRMessage(message);
-          // Process the result and update capabilities
-          this.processP1Data(result);
-        } catch (error: any) {
-          this.error(`Failed to parse DSMR message: ${error.message}`);
+    return new Promise((resolve) => {
+      const req = http.get(
+        {
+          host: this.ipAddress,
+          port: this.apiPort,
+          path: SPARKY_API_PATH,
+          timeout: 10000,
+        },
+        (res) => {
+          if (res.statusCode !== 200) {
+            this.handlePollError();
+            resolve();
+            return;
+          }
+          let body = '';
+          res.on('data', (chunk) => { body += chunk; });
+          res.on('end', () => {
+            try {
+              const data = JSON.parse(body) as SparkyApiData;
+              this.processApiData(data);
+              this.errorCount = 0;
+              this.setAvailable().catch(this.error);
+            } catch (e) {
+              this.handlePollError();
+            }
+            resolve();
+          });
         }
-      }
-    });
-
-    this.client.on('error', (error) => {
-      this.error('Socket error:', error);
-      this.client?.destroy();
-      this.pollingInterval = this.homey.setInterval(async () => {
-        this.log('Reconnecting to DSMR meter after socket error...');
-        await this.initializeSocket();
-      }, 5000);
-    });
-
-    this.client.on('close', () => {
-      this.log('Connection to DSMR meter closed.');
-      this.client?.destroy();
-      // Optionally, attempt to reconnect
-      this.pollingInterval = this.homey.setInterval(async () => {
-        this.log('Reconnecting to DSMR after closed socket...');
-        await this.initializeSocket();
-      }, 5000);
-    });
-
-    this.client.on('timeout', () => {
-      this.error('Socket timeout.');
-      this.client?.destroy();
-      this.pollingInterval = this.homey.setInterval(async () => {
-        this.log('Reconnecting to DSMR after socket timeout...');
-        await this.initializeSocket();
-      }, 5000);
+      );
+      req.on('error', () => {
+        this.handlePollError();
+        resolve();
+      });
+      req.on('timeout', () => {
+        req.destroy();
+        this.handlePollError();
+        resolve();
+      });
     });
   }
 
-  parseDSMRMessage(message: any) {
-    try {
-      return parsePacket(message);
-    } catch (error: any) {
-      this.error('Error parsing DSMR message:', error.message);
+  handlePollError() {
+    this.errorCount += 1;
+    if (this.errorCount >= this.maxErrorsBeforeUnavailable) {
+      this.setUnavailable(this.homey.__('errors.api_unavailable')).catch(this.error);
     }
   }
 
-  processP1Data(p1Data: any) {
+  processApiData(data: SparkyApiData) {
     try {
-      // Initialize initial readings if they are null or undefined
-      if (this.initialGasReading == null) {
-        this.initialGasReading = p1Data.gas?.reading;
-        this.setStoreValue('initialGasReading', this.initialGasReading);
-      }
+      const importKwh = data.total_power_import_kwh ?? 0;
+      const importT1 = data.total_power_import_t1_kwh ?? 0;
+      const importT2 = data.total_power_import_t2_kwh ?? 0;
+      const exportKwh = data.total_power_export_kwh ?? 0;
+      const exportT1 = data.total_power_export_t1_kwh ?? 0;
+      const exportT2 = data.total_power_export_t2_kwh ?? 0;
 
-      // @ts-ignore
-      // const meter_gas = p1Data.gas?.reading ? (p1Data.gas.reading - this.initialGasReading) : 0;
-      const meter_gas = p1Data.gas?.reading ? p1Data.gas.reading : 0;
+      const meterPower = importKwh - exportKwh;
+      const powerW = data.active_power_w ?? 0;
 
-      const meter_power_tariff1 = p1Data.electricity?.received?.tariff1?.reading || 0;
-      const meter_power_tariff2 = p1Data.electricity?.received?.tariff2?.reading || 0;
+      const gas = data.total_gas_m3 ?? 0;
 
-      const meter_power_delivered_tariff1 = p1Data.electricity?.delivered?.tariff1?.reading || 0;
-      const meter_power_delivered_tariff2 = p1Data.electricity?.delivered?.tariff2?.reading || 0;
+      const v1 = data.active_voltage_l1_v ?? 0;
+      const v2 = data.active_voltage_l2_v ?? 0;
+      const v3 = data.active_voltage_l3_v ?? 0;
 
-      // @ts-ignore
-      const meter_power = (meter_power_tariff1 + meter_power_tariff2) - (meter_power_delivered_tariff1 + meter_power_delivered_tariff2); //- (this.initialPowerReading || 0);
+      const c1 = data.active_current_l1_a ?? 0;
+      const c2 = data.active_current_l2_a ?? 0;
+      const c3 = data.active_current_l3_a ?? 0;
 
-      if (this.initialPowerReading == null) {
-        this.initialPowerReading = meter_power;
-        this.setStoreValue('initialPowerReading', this.initialPowerReading);
-      }
+      this.setCapabilityValue('meter_power', meterPower).catch(this.error);
+      this.setCapabilityValue('measure_power', powerW).catch(this.error);
+      this.setCapabilityValue('meter_gas', gas).catch(this.error);
 
-      // if(this.initialPowerDelivered == null) {
-      //   this.initialPowerDelivered = meter_power_delivered_tariff1 + meter_power_delivered_tariff2;
-      //   this.setStoreValue('initialPowerDelivered', this.initialPowerDelivered);
-      // }
-      //
-      // if(this.initialPowerReceived == null) {
-      //   this.initialPowerReceived = meter_power_tariff1 + meter_power_tariff2;
-      //   this.setStoreValue('initialPowerReceived', this.initialPowerReceived);
-      // }
+      this.setCapabilityValue('measure_voltage.L1', v1).catch(this.error);
+      this.setCapabilityValue('measure_voltage.L2', v2).catch(this.error);
+      this.setCapabilityValue('measure_voltage.L3', v3).catch(this.error);
+      this.setCapabilityValue('measure_current.L1', c1).catch(this.error);
+      this.setCapabilityValue('measure_current.L2', c2).catch(this.error);
+      this.setCapabilityValue('measure_current.L3', c3).catch(this.error);
 
-      // @ts-ignore
-      const cumulativeReceived = (meter_power_tariff1 + meter_power_tariff2);
-
-      // @ts-ignore
-      const cumulativeDelivered = (meter_power_delivered_tariff1 + meter_power_delivered_tariff2);
-
-      const received = p1Data.electricity?.received?.actual?.reading || 0;
-      const delivered = p1Data.electricity?.delivered?.actual?.reading || 0;
-
-      const power = (received - delivered) * 1000;
-
-      const current1 = p1Data.electricity?.instantaneous?.current?.L1?.reading;
-      const current2 = p1Data.electricity?.instantaneous?.current?.L2?.reading;
-      const current3 = p1Data.electricity?.instantaneous?.current?.L3?.reading;
-
-      const volt1 = p1Data.electricity?.instantaneous?.voltage?.L1?.reading;
-      const volt2 = p1Data.electricity?.instantaneous?.voltage?.L2?.reading;
-      const volt3 = p1Data.electricity?.instantaneous?.voltage?.L3?.reading;
-
-      this.setCapabilityValue('meter_gas', meter_gas).catch(this.error);
-      this.setCapabilityValue('meter_power', meter_power).catch(this.error);
-
-      this.setCapabilityValue('measure_power', power).catch(this.error);
-      this.setCapabilityValue('measure_current.L1', current1).catch(this.error);
-      this.setCapabilityValue('measure_current.L2', current2).catch(this.error);
-      this.setCapabilityValue('measure_current.L3', current3).catch(this.error);
-      this.setCapabilityValue('measure_voltage.L1', volt1).catch(this.error);
-      this.setCapabilityValue('measure_voltage.L2', volt2).catch(this.error);
-      this.setCapabilityValue('measure_voltage.L3', volt3).catch(this.error);
-      this.setCapabilityValue('meter_power.consumedPeak', meter_power_tariff1).catch(this.error);
-      this.setCapabilityValue('meter_power.consumedOffPeak', meter_power_tariff2).catch(this.error);
-      this.setCapabilityValue('meter_power.producedPeak', meter_power_delivered_tariff1).catch(this.error);
-      this.setCapabilityValue('meter_power.producedOffPeak', meter_power_delivered_tariff2).catch(this.error);
-      this.setCapabilityValue('meter_power.produced', cumulativeDelivered).catch(this.error);
-      this.setCapabilityValue('meter_power.consumed', cumulativeReceived).catch(this.error);
-      this.setCapabilityValue('meter_power.imported', cumulativeReceived).catch(this.error);
-      this.setCapabilityValue('meter_power.exported', cumulativeDelivered).catch(this.error);
+      this.setCapabilityValue('meter_power.consumedPeak', importT1).catch(this.error);
+      this.setCapabilityValue('meter_power.consumedOffPeak', importT2).catch(this.error);
+      this.setCapabilityValue('meter_power.producedPeak', exportT1).catch(this.error);
+      this.setCapabilityValue('meter_power.producedOffPeak', exportT2).catch(this.error);
+      this.setCapabilityValue('meter_power.consumed', importKwh).catch(this.error);
+      this.setCapabilityValue('meter_power.produced', exportKwh).catch(this.error);
+      this.setCapabilityValue('meter_power.imported', importKwh).catch(this.error);
+      this.setCapabilityValue('meter_power.exported', exportKwh).catch(this.error);
     } catch (error) {
-      this.error('Error processing P1 data:', error);
+      this.error('Error processing API data:', error);
     }
   }
 
-  /**
-   * onAdded is called when the user adds the device, called just after pairing.
-   */
+  // --- Discovery (for devices added via mDNS) ---
+
+  onDiscoveryResult(discoveryResult: Homey.DiscoveryResult): boolean {
+    return discoveryResult.id === this.getData().id;
+  }
+
+  async onDiscoveryAvailable(discoveryResult: Homey.DiscoveryResult) {
+    const dr = discoveryResult as any;
+    this.ipAddress = dr.address;
+    this.setStoreValue('ipAddress', this.ipAddress).catch(this.error);
+    this.startPolling();
+  }
+
+  onDiscoveryAddressChanged(discoveryResult: Homey.DiscoveryResult) {
+    const dr = discoveryResult as any;
+    this.ipAddress = dr.address;
+    this.setStoreValue('ipAddress', this.ipAddress).catch(this.error);
+    this.startPolling();
+  }
+
+  onDiscoveryLastSeenChanged(discoveryResult: Homey.DiscoveryResult) {
+    this.startPolling();
+  }
+
   async onAdded() {
     this.log('Sparky has been added');
   }
 
-  /**
-   * onSettings is called when the user updates the device's settings.
-   * @param {object} event the onSettings event data
-   * @param {object} event.oldSettings The old settings object
-   * @param {object} event.newSettings The new settings object
-   * @param {string[]} event.changedKeys An array of keys changed since the previous version
-   * @returns {Promise<string|void>} return a custom message that will be displayed
-   */
   async onSettings({
     oldSettings,
     newSettings,
@@ -233,34 +221,22 @@ class SparkyDevice extends Homey.Device {
     newSettings: { [key: string]: any };
     changedKeys: string[];
   }): Promise<string | void> {
-    if (changedKeys.includes('ipAddress')) {
-      this.ipAddress = newSettings.ipAddress;
+    if (changedKeys.includes('ip_address')) {
+      this.ipAddress = newSettings.ip_address;
+      this.setStoreValue('ipAddress', this.ipAddress).catch(this.error);
       this.log('Updated IP address:', this.ipAddress);
-
-      // Reinitialize the socket with the new IP address
-      this.client?.destroy();
-      await this.initializeSocket();
+      this.startPolling();
     }
     this.log('Sparky settings were changed');
   }
 
-  /**
-   * onRenamed is called when the user updates the device's name.
-   * This method can be used to synchronize the name to the device.
-   * @param {string} name The new name
-   */
   async onRenamed(name: string) {
     this.log('Sparky was renamed');
   }
 
-  /**
-   * onDeleted is called when the user deletes the device.
-   */
   async onDeleted() {
-    if (this.client) {
-      this.client.destroy();
-      this.log('Closed socket connection to Sparky energy meter.');
-    }
+    this.stopPolling();
+    this.log('Sparky device removed.');
   }
 }
 

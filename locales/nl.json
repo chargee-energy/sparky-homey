@@ -1,18 +1,34 @@
 {
+  "errors": {
+    "api_unavailable": "Sparky API niet bereikbaar"
+  },
   "pair": {
     "title": "Sparky slimme P1 Meter",
     "subtitle": "Voer hier de details van uw Sparky P1 meter in.",
+    "intro_title": "Voeg je Sparky toe",
+    "intro_subtitle": "Sparkys op je netwerk kunnen in de volgende stap verschijnen. Je kunt er ook een handmatig toevoegen door het IP-adres in te voeren.",
+    "firmware_requirement": "We ondersteunen alleen Sparkys met firmware 95 of hoger (met de Sparky API ingeschakeld).",
+    "manual_title": "Sparky handmatig toevoegen",
+    "manual_subtitle": "Als je Sparky hierboven niet in de lijst stond, vul dan hieronder de naam en het IP-adres in. De Sparky moet de API hebben ingeschakeld (firmware 95 of hoger).",
     "name_label": "Naam Sparky",
     "ip_label": "IP Adres",
     "submit": "Verbind je Sparky",
-    "title_firmware_update": "Sparky Firmware 52 of hoger noodzakelijk",
+    "title_firmware_update": "Sparky Firmware 95 of hoger noodzakelijk",
     "subtitle_firmware_update": "Bevestig dat je de laatste firmware versie van Sparky hebt geïnstalleerd.",
     "update_instructions": "Volg deze instructies om je Sparky Firmware te controleren.",
     "step1": "Verbind je Sparky",
     "step2": "Open de Sparky app op je mobiel of tablet.",
     "step3": "Navigeer naar <strong>Profiel </strong>&gt; <strong>Jouw Adres </strong> &gt; <strong>Sparky </strong>.",
-    "step4": "Controleer of je Sparky op firmware 52 of hoger draait.",
+    "step4": "Controleer of je Sparky op firmware 95 of hoger draait.",
     "note": "Als je Sparky niet op de laatste versie van de Firmware draait, zal die na een verse installatie binnen 24 uur worden bijgewerkt. Mocht dat niet het geval zijn, neem dan contact op met onze <a href=\"https://support.chargee.energy/\">klantenservice</a>.",
-    "button_next": "Volgende"
+    "button_next": "Volgende",
+    "error_no_sparky": "Geen Sparky gevonden op dit adres. Controleer het IP-adres en of de Sparky API is ingeschakeld (firmware 95 of hoger).",
+    "discover_title": "Zoeken naar Sparkys",
+    "discover_subtitle": "Sparkys op je netwerk verschijnen hieronder. Alleen apparaten met firmware 95 of hoger worden getoond.",
+    "discover_searching": "Zoeken naar Sparkys op je netwerk…",
+    "discover_none": "Geen Sparkys gevonden op je netwerk.",
+    "discover_none_hint": "Je kunt er een handmatig toevoegen via het IP-adres.",
+    "discover_add_manual": "Handmatig toevoegen",
+    "discover_tap_to_add": "Tik om toe te voegen"
   }
 }

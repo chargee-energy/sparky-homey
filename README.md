@@ -1,15 +1,17 @@
-⚠️ De Chargee Sparky App is nog in ontwikkeling. Deze versie wordt momenteel getest en is nog niet goedgekeurd. Wees extra voorzichtig bij het gebruik van deze app.
-
 # Chargee Sparky
-Access P1 meter data from the Sparky P1 meter through the local API. The app supports version 1.0 / 2.0 and 3.0 of the P1 meter.
+Access P1 meter data from the Sparky an Flint P1 meter through the local API. The app supports version 1.0 / 2.0 and 3.0 of the P1 meter.
 
 ### Status
-Publicly released version 1.0.2. Available in the Athom App Store.
+Publicly released version 1.0.12. Available in the Athom App Store.
 
 ### Author
 Chargee Energy - https://chargee.energy
 
 ### Release Notes
+
+#### 1.0.12
+- Adding new local API
+- Adding mDNS lookup of Sparky and Flint devices
 
 #### 1.0.9
 - Added additional capabilities
